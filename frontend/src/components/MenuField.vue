@@ -1,66 +1,49 @@
 <template>
     <div class='menu-view'>
-        <div v-if="isAuthenticated">
-            Авторизован
-        </div>
-        <div v-else>
-            <form id='login-form' class='login-form' action="">
-                <label style='text-align: left' for='email'>Почта</label>
-                <input v-model='email' id='email' type="email" name='email' autocomplete='current-email'>
-                <label style='text-align: left' for='password'>Пароль</label>
-                <input v-model='password' id='password' type="password" name='password' autocomplete='current-password'>
-                <input type="submit">
-                <input type="button" @click='tryLogin()' value='log in'>
-                <input type="button" @click='checkLogin()' value='check auth'>
-            </form>
-        </div>
+        <nav>
+            <ul v-if='!isAuthenticated' class='navigation'>
+                <li>
+                    <router-link to="/login">Login</router-link>
+                </li>
+                <li>
+                    <router-link to="/register">Register</router-link>
+                </li>
+            </ul>
+            <ul v-else class='navigation'>
+                <li>
+                    <router-link to="/">Main</router-link>
+                </li>
+                <li>
+                    <router-link to="/">Another link</router-link>
+                </li>
+                <li>
+                    <router-link to="/">More links</router-link>
+                </li>
+                <li>
+                    <router-link to="/login" @click.native='logout()'>Logout</router-link>
+                </li>
+            </ul>
+        </nav>
+        <router-view></router-view>
     </div>
 </template>
 
 <script>
 
-
-function setCookie(cName, cValue, expDays) {
-        let date = new Date();
-        date.setTime(date.getTime() + (expDays * 24 * 60 * 60 * 1000));
-        const expires = "expires=" + date.toUTCString();
-        document.cookie = cName + "=" + cValue + "; " + expires + "; path=/";
-}
-
-
+import Cookies from 'js-cookie'
 
 export default {
   name: 'MenuView',
-  data() {
-    return {
-        email: '',
-        password: '',
-    }
-  },
+
   computed: {
     isAuthenticated() {
         return this.$store.getters.isAuthenticated;
     }
   },
   methods: {
-    tryLogin() {
-        const form = document.getElementById("login-form");
-        const formData = new FormData(form);
-        fetch(this.$api + 'obtain-token/', {
-            method: 'post',
-            body: formData,
-        })
-        .then((res) => res.json())
-        .then((data) => {
-            setCookie('token', data.token, 30)
-            this.$store.dispatch('SET_TOKEN', data.token)
-        })
-        .catch((err) => {
-            console.log(err)
-        })
-    },
+
     checkLogin() {
-        fetch( this.$api + 'view/', {
+        fetch(this.$api + 'view/', {
             method: 'get',
             headers: {
                 'Authorization': `Bearer ${this.$store.getters.token}` 
@@ -68,12 +51,38 @@ export default {
         })
         .then((res) => res.json())
         .then((data) => {
-            console.log(data)
+            console.log(data);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    },
+    logout() {
+        fetch( this.$api + 'logout/', {
+            method: 'post',
+            headers: {
+                'Authorization': `Bearer ${this.$store.getters.token}`
+            },
+        })
+        .then((res) => {
+            if (res.ok) {
+                return res.json();
+            }
+            else {
+                throw new Error("Not 2xx response", {cause: res});
+            }
+        })
+        .then(() => {
+
         })
         .catch((err) => {
             console.log(err)
         })
-    },
+        .finally(() => {
+            Cookies.remove('token');
+            this.$store.dispatch('TOGGLE_IS_AUTHENTICATED');
+        })
+    }
   },
 }
 
@@ -92,6 +101,24 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 5px;
+}
+
+.navigation {
+    display: flex;
+    gap: 10px;
+    list-style-type: none;
+    a {
+        display: block;
+        background-color: black;
+        color: white;
+        font-weight: 600;
+        text-decoration: none;
+        padding: 10px;
+    }
+    a:hover {
+        cursor: pointer;
+        color: grey;
+    }
 }
 
 </style>

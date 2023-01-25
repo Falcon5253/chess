@@ -30,6 +30,10 @@ class User(AbstractUser, PermissionsMixin):
 
     is_active = models.BooleanField(verbose_name='активирован', default=True)
     is_superuser = models.BooleanField(verbose_name='администратор', default=False)
+    is_staff = None
+    first_name = None
+    last_name = None
+    groups = None
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -42,3 +46,5 @@ class User(AbstractUser, PermissionsMixin):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+
+user_manager = Manager()

@@ -1,6 +1,6 @@
 <template>
     <div class='game-view'>
-        <img class='board' alt="board" src="../assets/board.svg">
+        <img class='board' alt="board" src="../assets/board.svg" draggable='false'>
     </div>
 </template>
 
@@ -14,6 +14,7 @@ export default {
 
 .game-view {
     width: 50%;
+    user-select: none;
 }
 
 .board {
