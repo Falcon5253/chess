@@ -9,13 +9,30 @@
 import GameView from './components/GameView.vue'
 import MenuField from './components/MenuField.vue'
 
+
+function getCookie(cName) {
+      const name = cName + "=";
+      const cDecoded = decodeURIComponent(document.cookie);
+      const cArr = cDecoded .split('; ');
+      let res;
+      cArr.forEach(val => {
+          if (val.indexOf(name) === 0) res = val.substring(name.length);
+      })
+      return res;
+}
+
+
 export default {
   name: 'App',
   components: {
     GameView, MenuField
   },
   mounted() {
-    console.log(this.$store.state.count);
+    let token = getCookie('token')
+    if (token != undefined) {
+      this.$store.dispatch('SET_TOKEN', token)
+    }
+    this.$store.dispatch('CHECK_AUTHENTICATION')
   }
 }
 </script>
