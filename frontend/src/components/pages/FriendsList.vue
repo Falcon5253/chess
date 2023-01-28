@@ -1,8 +1,9 @@
 <template>
-    <ul class='games-list'>
-        <li class='games-list__item'>
-            <p class='games-list__text'>Вася против Пети</p>
-            <router-link class='games-list__link' to='/'>Перейти к игре</router-link>
+    <ul class='friends-list'>
+        <li class='friends-list__item'>
+            <p class='friends-list__text'>Вася</p>
+            <router-link class='friends-list__link' to='/friends'>Бросить вызов</router-link>
+            <router-link class='friends-list__link' to='/friends'>Перейти в чат</router-link>
         </li>
     </ul>
 </template>
@@ -10,14 +11,14 @@
 <script>
 
 export default {
-    name: 'MainView',
+    name: 'FriendList',
 }
 
 </script>
 
 <style lang='scss'>
 
-.games-list {
+.friends-list {
     list-style-type: none;
     padding-left: 0;
     &__item {

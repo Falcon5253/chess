@@ -11,16 +11,19 @@
             </ul>
             <ul v-else class='navigation'>
                 <li>
-                    <router-link to="/">Main</router-link>
+                    <router-link to="/">Игры</router-link>
                 </li>
                 <li>
-                    <router-link to="/">Another link</router-link>
+                    <router-link to="/friends">Друзья</router-link>
                 </li>
                 <li>
-                    <router-link to="/">More links</router-link>
+                    <router-link to="/chats">Чаты</router-link>
                 </li>
                 <li>
-                    <router-link to="/login" @click.native='logout()'>Logout</router-link>
+                    <router-link to="/history">История</router-link>
+                </li>
+                <li>
+                    <router-link to="/login" @click.native='logout()'>Выйти</router-link>
                 </li>
             </ul>
         </nav>
@@ -105,8 +108,13 @@ export default {
 
 .navigation {
     display: flex;
+    width: 100%;
     gap: 10px;
     list-style-type: none;
+    padding-left: 0;
+    li {
+        width: 100%;
+    }
     a {
         display: block;
         background-color: black;

@@ -7,7 +7,7 @@ import VueRouter from 'vue-router'
 import LoginView from '@/components/pages/LoginView.vue'
 import MainView from '@/components/pages/MainView.vue'
 import RegisterView from '@/components/pages/RegisterView.vue'
-
+import FriendList from '@/components/pages/FriendsList.vue'
 
 
 
@@ -16,9 +16,10 @@ Vue.use(VueRouter)
 
 
 const routes = [
+  { path: '/', component: MainView },
   { path: '/login', component:  LoginView},
   { path: '/register', component:  RegisterView},
-  { path: '/', component: MainView },
+  { path: '/friends', component: FriendList },
 ]
 
 

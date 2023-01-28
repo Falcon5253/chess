@@ -34,6 +34,9 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+  margin-right: 50px;
+  margin-left: 50px;
   display: flex;
+  gap: 50px;
 }
 </style>
