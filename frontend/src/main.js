@@ -27,14 +27,15 @@ const router = new VueRouter({
   routes,
 })
 
-
+const api = process.env.VUE_APP_API_URL;
 
 
 
 const store = new Vuex.Store({
   state: {
     isAuthenticated: false,
-    authToken: undefined
+    authToken: undefined,
+    games: [],
   },
   getters: {
     isAuthenticated(state) {
@@ -42,6 +43,9 @@ const store = new Vuex.Store({
     },
     token(state) {
       return state.authToken;
+    },
+    games(state) {
+      return state.games;
     }
   },
   mutations: {
@@ -58,7 +62,23 @@ const store = new Vuex.Store({
     },
     toggleIsAuthenticated(state) {
       state.isAuthenticated = !state.isAuthenticated;
-    }
+    },
+    getGames(state) {
+      fetch(api + 'games/', {
+          method: 'get',
+      })
+      .then((res) => {
+          if (res.ok) {
+              return res.json();
+          }
+          else {
+              throw new Error("Not 2xx response", {cause: res});
+          }
+      })
+      .then((data) => {
+          state.games = data;
+      })
+    },
   },
   actions: {
     CHECK_AUTHENTICATION(context) {
@@ -69,15 +89,18 @@ const store = new Vuex.Store({
     },
     TOGGLE_IS_AUTHENTICATED(context) {
       context.commit('toggleIsAuthenticated');
-    }
+    },
+    GET_GAMES(context) {
+      context.commit('getGames');
+    },
   }
 })
 
 
 
-Vue.config.productionTip = false
+Vue.config.productionTip = api;
 
-Vue.prototype.$api = process.env.VUE_APP_API_URL
+Vue.prototype.$api = api;
 
 new Vue({
   render: h => h(App),

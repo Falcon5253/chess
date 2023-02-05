@@ -11,8 +11,6 @@ class GameView(APIView):
     # permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-        print(1111111111111111)
         games = Game.objects.all()
-        print(games[0].game_data)
-        ser = GameSerializer(games[0])
+        ser = GameSerializer(games, many=True)
         return Response(ser.data)

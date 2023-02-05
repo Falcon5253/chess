@@ -1,12 +1,58 @@
 <template>
     <div class='game-view'>
-        <img class='board' alt="board" src="../assets/board.svg" draggable='false'>
+        <div  class='board'>
+            <div class='figures'>
+                <img v-for='cell in gameData' v-bind:key='cell.id' :alt="cell" :src="require(`../assets/${cell.figure}.svg`)" :draggable='cell.code != 0'>
+            </div>
+            <img class="board-img" alt='board' src="@/assets/board.svg" draggable='false'>
+        </div>
     </div>
 </template>
 
 <script>
 export default {
-  name: 'GameView',
+    data() {
+        return {
+            gameData: [],
+        }
+    },
+    computed: {
+
+    },
+    methods: {
+        convertData() {
+            let games = this.$store.getters.games;
+            // уточнять какую игру
+            let game = games[0];
+            let stringData = game['game_data'].split('');
+            this.gameData = [];
+            for (var i = 0; i < stringData.length; i++) {
+                let code = stringData[i];
+                this.gameData.push(
+                    {
+                        'id': i,
+                        'code': code,
+                        'figure': this.getFigureNameByCode(code),
+                    }
+                )
+            }
+        },
+        getFigureNameByCode(code) {
+            switch(code) {
+                case '1':
+                    return 'pawn-w';
+                case '2':
+                    return 'rook-w';
+                default:
+                    return 'empty';
+                }
+        }
+    },
+    name: 'GameView',
+    mounted() {
+        this.$root.$on('showGame', this.convertData);
+        // this.convertData();
+    }
 }
 </script>
 
@@ -20,17 +66,38 @@ export default {
 .board {
     border: 2px solid;
     width: 640px;
+    height: 640px;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+}
+.board-img {
+    width: 100%;
+}
+
+.figures {
+    position: absolute;
+    display: grid;
+    width: 100%;
+    height: 100%;
+    background-color: rgba($color: #000000, $alpha: 0.5);
+    grid-template-columns: repeat(8, 80px);
+    img {
+        width: 100%;
+    }
 }
 
 @media (max-width: 1280px) {
     .board { 
         width: 480px;
+        height: 480px;
     }
 }
 
 @media (max-width: 960px) {
     .board { 
         width: 320px;
+        height: 320px;
     }
 }
 </style>
