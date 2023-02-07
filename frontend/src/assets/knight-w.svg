@@ -8,7 +8,7 @@
    version="1.1"
    id="svg5"
    inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
-   sodipodi:docname="rook-w.svg"
+   sodipodi:docname="knight-w.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -25,8 +25,8 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="1.5091049"
-     inkscape:cx="114.30617"
-     inkscape:cy="190.8416"
+     inkscape:cx="51.354946"
+     inkscape:cy="179.57665"
      inkscape:window-width="1920"
      inkscape:window-height="1027"
      inkscape:window-x="-8"
@@ -40,13 +40,9 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       id="rect951"
-       style="fill:#ffffff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:#000000;stroke-opacity:1;stroke-dasharray:none"
-       d="m 30,40 h 40 l 5,50 H 25 Z"
-       sodipodi:nodetypes="ccccc" />
-    <path
-       style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"
-       d="m 20.037179,10.134815 0.07748,29.800075 H 79.939514 V 10.037338 H 65.17695 v 19.89935 H 57.506494 V 10.037338 H 42.560065 v 19.89935 H 34.933442 V 10.168831 Z"
-       id="path345" />
+       style="fill:#ffffff;stroke:#000000;stroke-width:1.9071;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+       d="M 60.367448,57.332526 58.88984,40.522899 81.046466,46.725929 79.852442,34.066917 63.962526,21.894932 l -8.835782,-3.334043 -0.93992,-7.60749 -5.253709,6.494077 -14.514767,3.862265 -6.925344,4.390486 -8.539459,16.268324 4.537294,18.08797 -0.107878,28.437208 37.865547,0.552723 z"
+       id="path345"
+       sodipodi:nodetypes="ccccccccccccccc" />
   </g>
 </svg>

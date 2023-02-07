@@ -26,6 +26,7 @@ export default {
             let game = games[0];
             let stringData = game['game_data'].split('');
             this.gameData = [];
+            // for (var i = stringData.length-1; i >= 0; i--) {
             for (var i = 0; i < stringData.length; i++) {
                 let code = stringData[i];
                 this.gameData.push(
@@ -43,9 +44,29 @@ export default {
                     return 'pawn-w';
                 case '2':
                     return 'rook-w';
+                case '3':
+                    return 'knight-w';
+                case '4':
+                    return 'bishop-w';
+                case '5':
+                    return 'king-w';
+                case '6':
+                    return 'queen-w';
+                case '7':
+                    return 'pawn-b';
+                case '8':
+                    return 'rook-b';
+                case '9':
+                    return 'knight-b';
+                case 'A':
+                    return 'bishop-b';
+                case 'B':
+                    return 'king-w';
+                case 'C':
+                    return 'queen-b';
                 default:
                     return 'empty';
-                }
+            }
         }
     },
     name: 'GameView',
@@ -80,7 +101,6 @@ export default {
     display: grid;
     width: 100%;
     height: 100%;
-    background-color: rgba($color: #000000, $alpha: 0.5);
     grid-template-columns: repeat(8, 80px);
     img {
         width: 100%;

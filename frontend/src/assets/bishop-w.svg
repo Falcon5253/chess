@@ -8,7 +8,7 @@
    version="1.1"
    id="svg5"
    inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
-   sodipodi:docname="rook-w.svg"
+   sodipodi:docname="bishop-w.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -25,8 +25,8 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="1.5091049"
-     inkscape:cx="114.30617"
-     inkscape:cy="190.8416"
+     inkscape:cx="101.05328"
+     inkscape:cy="178.914"
      inkscape:window-width="1920"
      inkscape:window-height="1027"
      inkscape:window-x="-8"
@@ -40,13 +40,25 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       id="rect951"
-       style="fill:#ffffff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke:#000000;stroke-opacity:1;stroke-dasharray:none"
-       d="m 30,40 h 40 l 5,50 H 25 Z"
+       id="rect4678"
+       style="fill:#ffffff;stroke:#000000;stroke-width:3.96875;stroke-linecap:round;stroke-linejoin:bevel;paint-order:stroke markers fill;stroke-dasharray:none"
+       d="m 50,20 v 0 L 65,80 H 35 Z"
        sodipodi:nodetypes="ccccc" />
-    <path
-       style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"
-       d="m 20.037179,10.134815 0.07748,29.800075 H 79.939514 V 10.037338 H 65.17695 v 19.89935 H 57.506494 V 10.037338 H 42.560065 v 19.89935 H 34.933442 V 10.168831 Z"
-       id="path345" />
+    <rect
+       style="fill:#ffffff;stroke:#000000;stroke-width:3.96875;stroke-linecap:round;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"
+       id="rect4680"
+       width="48.327415"
+       height="8.3274212"
+       x="25.836292"
+       y="80.836296"
+       ry="4.1637106"
+       rx="0" />
+    <ellipse
+       style="fill:#ffffff;stroke:#000000;stroke-width:3.96875;stroke-linecap:round;stroke-linejoin:bevel;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"
+       id="path4734"
+       cx="50"
+       cy="22.5"
+       rx="6.3331661"
+       ry="11.333165" />
   </g>
 </svg>
