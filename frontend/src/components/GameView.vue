@@ -23,11 +23,11 @@ export default {
         convertData() {
             let games = this.$store.getters.games;
             // уточнять какую игру
-            let game = games[0];
+            let game = games[2];
             let stringData = game['game_data'].split('');
             this.gameData = [];
-            // for (var i = stringData.length-1; i >= 0; i--) {
-            for (var i = 0; i < stringData.length; i++) {
+            for (var i = stringData. length-1; i >= 0; i--) {
+            // for (var i = 0; i < stringData.length; i++) {
                 let code = stringData[i];
                 this.gameData.push(
                     {
@@ -61,7 +61,7 @@ export default {
                 case 'A':
                     return 'bishop-b';
                 case 'B':
-                    return 'king-w';
+                    return 'king-b';
                 case 'C':
                     return 'queen-b';
                 default:

@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
-
+import Cookies from 'js-cookie'
 
 import LoginView from '@/components/pages/LoginView.vue'
 import MainView from '@/components/pages/MainView.vue'
@@ -64,8 +64,12 @@ const store = new Vuex.Store({
       state.isAuthenticated = !state.isAuthenticated;
     },
     getGames(state) {
+      const token = Cookies.get('token');
       fetch(api + 'games/', {
           method: 'get',
+          headers: {
+            'Authorization': `Bearer ${token}` 
+          },
       })
       .then((res) => {
           if (res.ok) {

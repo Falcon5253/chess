@@ -17,7 +17,7 @@ class Game(models.Model):
     game_data = models.BinaryField(
         null=True,
         verbose_name='Игровые данные',
-        default=bytes(b"2345643211111111000000000000000000000000000000007777777789ABCA98")
+        default=bytes(b"89ABCA9877777777000000000000000000000000000000001111111123456432")
     )
     history = models.BinaryField(
         null=True,

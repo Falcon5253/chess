@@ -29,9 +29,9 @@ def game_data_to_array(game_data):
     game_array = ['']
     for index, figure in enumerate(game_data):
         if index % 8 == 0 and index != 0:
-            game_array.append('')
+            game_array.insert(0, '')
         
-        game_array[-1] += figure
+        game_array[0] += figure
 
     return game_array
 
@@ -59,19 +59,27 @@ def transfer_by_coordinates(game_array, x1, x2, y1, y2):
     return game_array
 
 
+def game_array_to_data(game_array):
+    string_of_game_data = ''
+    for line in game_array:
+        string_of_game_data = line + string_of_game_data
+        
+    game_data = bytes(string_of_game_data, 'ascii')
+    
+    return  game_data
+
+
 def make_turn(user, game, turn):
     # Getting current board data
     game_array = game_data_to_array(game.game_data)
-    
     # Parsing turn from where to where put a figure
     x1, x2, y1, y2 = turn_to_coordinates(turn)
-    for line in game_array:
-        print(line)
+    next_step_game_array = transfer_by_coordinates(game_array, x1, x2, y1, y2)
     
-    next_game_array = transfer_by_coordinates(game_array, x1, x2, y1, y2)
-
-    for line in next_game_array:
-        print(line)
+    game_data = game_array_to_data(next_step_game_array)
+    game.game_data = game_data
+    game.save()
+    
     
 
 class GameView(APIView):
