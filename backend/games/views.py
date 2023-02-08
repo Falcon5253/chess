@@ -48,7 +48,7 @@ def turn_to_coordinates(turn):
     y2 = indexes[y2]
     return x1, x2, y1, y2
 
-def transfer_by_coordinates(game_array, x1, x2, y1, y2):
+def move_by_coordinates(game_array, x1, x2, y1, y2):
     # Copying data from previous position to the new one
     game_array[x2] = game_array[x2][:y2] + game_array[x1][y1] + game_array[x2][y2+1:]
     
@@ -74,7 +74,7 @@ def make_turn(user, game, turn):
     game_array = game_data_to_array(game.game_data)
     # Parsing turn from where to where put a figure
     x1, x2, y1, y2 = turn_to_coordinates(turn)
-    next_step_game_array = transfer_by_coordinates(game_array, x1, x2, y1, y2)
+    next_step_game_array = move_by_coordinates(game_array, x1, x2, y1, y2)
     
     game_data = game_array_to_data(next_step_game_array)
     game.game_data = game_data

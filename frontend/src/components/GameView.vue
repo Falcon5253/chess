@@ -2,7 +2,15 @@
     <div class='game-view'>
         <div  class='board'>
             <div class='figures'>
-                <img v-for='cell in gameData' v-bind:key='cell.id' :alt="cell" :src="require(`../assets/${cell.figure}.svg`)" :draggable='cell.code != 0'>
+                <img 
+                    class='drop-field' 
+                    v-for='cell, index in gameData' v-bind:key='cell.id'
+                    :alt="cell.figure"
+                    :src="require(`../assets/${cell.figure}.svg`)"
+                    :draggable='cell.code != 0'
+                    :id="'cell'+index"
+                    @dragstart='(event) => startDragging(event, index)'
+                    @drop='(event) => endDraggingAndMakeTurn(event, index)'>
             </div>
             <img class="board-img" alt='board' src="@/assets/board.svg" draggable='false'>
         </div>
@@ -14,6 +22,7 @@ export default {
     data() {
         return {
             gameData: [],
+            whiteSided: true,
         }
     },
     computed: {
@@ -67,7 +76,29 @@ export default {
                 default:
                     return 'empty';
             }
-        }
+        },
+        startDragging(event, index) {
+            const cells = document.getElementsByClassName('drop-field');
+            for (let i = 0; i < cells.length; i++) {
+                cells[i].addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                });
+                cells[i].addEventListener('dragenter', (e) => {
+                    e.preventDefault();
+                });
+            }
+            let figure = event.target.getAttribute('alt');
+            event.dataTransfer.setData("text/plain", [figure, index]);
+            // УДАЛЕНИЕ КАРТИНКИ ИЗ ПРОШЛОГО ПОЛОЖЕНИЯ, ЛУЧШЕ СДЕЛАТЬ ПОСЛЕ БРОСКА ЕЕ В ДРУГУЮ КЛЕТКУ
+            this.gameData[index].code = '0';
+            this.gameData[index].figure = this.getFigureNameByCode('0');
+        },
+        endDraggingAndMakeTurn(event, index) {
+            let dataTransfered = event.dataTransfer.getData('text').split(',');
+            console.log(dataTransfered);
+            console.log(index);
+            event.target.setAttribute('src', dataTransfered[0])
+        },
     },
     name: 'GameView',
     mounted() {
@@ -82,6 +113,11 @@ export default {
 .game-view {
     width: 50%;
     user-select: none;
+}
+
+.dragging {
+    opacity: 100%;
+    cursor: pointer;
 }
 
 .board {
