@@ -1,34 +1,38 @@
 <template>
     <div class='game-view'>
-        <div  class='board'>
+        <div  class='board' :class="{ player2 : isPlayer2 }">
             <div class='figures'>
-                <img 
-                    class='drop-field' 
+                <CellBlock
+                    class='drop-field'
+                    :class="{ player2 : isPlayer2 }"
                     v-for='cell, index in gameData' v-bind:key='cell.id'
-                    :alt="cell.figure"
-                    :src="require(`../assets/${cell.figure}.svg`)"
-                    :draggable='cell.figure != "empty" && !isTurnMade'
-                    :id="cell.cell"
-                    @dragstart='(event) => startDragging(event, index)'
-                    @drop='(event) => endDraggingAndMakeTurn(event, index)'>
+                    :cell="cell"
+                    :index=index
+                    :isTurnMade=isTurnMade
+                    @makeTurn="(e, data) => makeTurn(e, data)"
+                ></CellBlock>
             </div>
             <img class="board-img" alt='board' src="@/assets/board.svg" draggable='false'>
-            <input
-                class='commit-turn'
-                type="button"
-                value='Поддвердить ход'
-                :disabled='!isTurnMade'
-                @click='sendTurnData()'>
         </div>
+        <input
+            class='commit-turn'
+            type="button"
+            value='Поддвердить ход'
+            :disabled='!isTurnMade'
+            @click='sendTurnData()'>
     </div>
 </template>
 
 <script>
+import CellBlock from "@/components/blocks/CellBlock.vue"
+
 export default {
+    components: {
+        CellBlock,
+    },
     data() {
         return {
             gameId: -1,
-            whiteSided: true,
             isTurnMade: false,
             turn: '',
         }
@@ -42,46 +46,38 @@ export default {
         },
         game() {
             return this.$store.getters.games.find(element => element.id == this.gameId);
-        }
+        },
+        isPlayer2() {
+            if (this.game != undefined) {
+                if (this.game.player2 == this.$store.getters.profile['email']) {
+                    return true
+                }
+            }
+            return false;
+        },
     },
     methods: {
-        startDragging(event, index) {
-            const cells = document.getElementsByClassName('drop-field');
-            for (let i = 0; i < cells.length; i++) {
-                cells[i].addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                });
-                cells[i].addEventListener('dragenter', (e) => {
-                    e.preventDefault();
-                });
-            }
-            let figure = this.gameData[index].figure;
-            event.dataTransfer.setData("text/plain", [figure, index]);
-        },
-        endDraggingAndMakeTurn(event, index) {
-            // Getting data from previous cell
-            let dataTransfered = event.dataTransfer.getData('text').split(',');
-            console.log(dataTransfered);
-            let figure = dataTransfered[0];
-            let previousCellIndex = dataTransfered[1];
+        makeTurn(data) {
+
+            // Getting turn data
+            data = data.split(",");
+            let figure = data[0]
+            let fromIndex = data[1]
+            let toIndex = data[2]
             
             // Editing game data
-            this.gameData[previousCellIndex].figure = 'empty';
-            this.gameData[index].figure = figure;
-            this.game['game_data'] = this.gameData;
+            this.gameData[fromIndex].figure = 'empty';
+            this.gameData[toIndex].figure = figure;
             
             // Creating turn for server request
-            let from = this.gameData[previousCellIndex].cell;
-            let to = this.gameData[index].cell;
+            let from = this.gameData[fromIndex].cell;
+            let to = this.gameData[toIndex].cell;
             this.turn = from + "-" + to;
-            this.isTurnMade = true;
+
+            this.isTurnMade = true;           
         },
         sendTurnData() {
-            console.log(this.gameData);
-            // Нормализовать данные для сервера и отправить их
-
-            console.log(this.turn);
-            
+            this.$store.dispatch('SEND_TURN', {'game_id': this.gameId, 'turn': this.turn})
         }
     },
     name: 'GameView',
@@ -106,6 +102,10 @@ export default {
 .dragging {
     opacity: 100%;
     cursor: pointer;
+}
+
+.player2 {
+    transform: rotate(180deg);
 }
 
 .board {
@@ -133,7 +133,7 @@ export default {
 
 .commit-turn {
     margin-top: 15px;
-    width: 100%;    
+    width: 640px;    
     height: 60px;
 }
 

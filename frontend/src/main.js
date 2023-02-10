@@ -37,10 +37,14 @@ const store = new Vuex.Store({
     isAuthenticated: false,
     authToken: undefined,
     games: [],
+    profile: {},
   },
   getters: {
     isAuthenticated(state) {
       return state.isAuthenticated;
+    },
+    profile(state) {
+      return state.profile;
     },
     token(state) {
       return state.authToken;
@@ -53,6 +57,23 @@ const store = new Vuex.Store({
     checkAuthentication (state) {
       if (state.authToken != undefined) {
         state.isAuthenticated = true;
+        fetch(api + 'profile/', {
+            method: 'get',
+            headers: {
+              'Authorization': `Bearer ${state.authToken}` 
+            },
+        })
+        .then((res) => {
+            if (res.ok) {
+                return res.json();
+            }
+            else {
+                throw new Error("Not 2xx response", {cause: res});
+            }
+        })
+        .then((data) => {
+          state.profile = data;
+        })
       }
       else {
         state.isAuthenticated = false;
@@ -84,6 +105,29 @@ const store = new Vuex.Store({
           state.games = data;
       })
     },
+    sendTurn(state, data) {
+      console.log(data);
+      var formData = new FormData();
+      for (let key in data) {
+          formData.append(key, data[key]);
+      }
+
+      fetch(api + 'games/', {
+          method: 'post',
+          body: formData,
+          headers: {
+            'Authorization': `Bearer ${state.authToken}` 
+          },
+      })
+      .then((res) => {
+          if (res.ok) {
+              return res.json();
+          }
+          else {
+              throw new Error("Not 2xx response", {cause: res});
+          }
+      })
+    }
   },
   actions: {
     CHECK_AUTHENTICATION(context) {
@@ -98,6 +142,9 @@ const store = new Vuex.Store({
     GET_GAMES(context) {
       context.commit('getGames');
     },
+    SEND_TURN(context, data) {
+      context.commit('sendTurn', data);
+    }
   }
 })
 

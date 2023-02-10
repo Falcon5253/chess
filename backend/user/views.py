@@ -7,13 +7,12 @@ from .models import User
 from rest_framework.authtoken.models import Token
 from .serializers import LoginUserSerializer, RegisterUserSerializer
 
-class GetUserView(APIView):
+class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         content = {
-            'user': str(request.user),
-            'auth': str(request.auth),
+            'email': str(request.user),
         }
         return Response(content)
 
