@@ -2,7 +2,7 @@
     <ul class='games-list'>
         <li class='games-list__item' v-for="game in games" :key="game.id">
             <p class='games-list__text'>{{ game.player1 }} против {{ game.player2 }}</p>
-            <input type="button" value='К игре' @click='selectGame()'>
+            <input type="button" value='К игре' @click='selectGame(game.id)'>
         </li>
     </ul>
 </template>
@@ -17,9 +17,11 @@ export default {
         }
     },
     methods: {
-        // функция должна будет принимать id и находить нужную игру по нему для преобразования данных
-        selectGame() {
-            this.$root.$emit('showGame');
+        selectGame(gameId) {
+            if (this.$route.params.id != gameId) {
+                this.$router.push("/" + gameId);
+            }
+            this.$root.$emit('showGame', gameId);
         }
     },
     mounted() {

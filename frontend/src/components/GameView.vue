@@ -7,12 +7,18 @@
                     v-for='cell, index in gameData' v-bind:key='cell.id'
                     :alt="cell.figure"
                     :src="require(`../assets/${cell.figure}.svg`)"
-                    :draggable='cell.code != 0'
-                    :id="'cell'+index"
+                    :draggable='cell.figure != "empty" && !isTurnMade'
+                    :id="cell.cell"
                     @dragstart='(event) => startDragging(event, index)'
                     @drop='(event) => endDraggingAndMakeTurn(event, index)'>
             </div>
             <img class="board-img" alt='board' src="@/assets/board.svg" draggable='false'>
+            <input
+                class='commit-turn'
+                type="button"
+                value='Поддвердить ход'
+                :disabled='!isTurnMade'
+                @click='sendTurnData()'>
         </div>
     </div>
 </template>
@@ -21,62 +27,24 @@
 export default {
     data() {
         return {
-            gameData: [],
+            gameId: -1,
             whiteSided: true,
+            isTurnMade: false,
+            turn: '',
         }
     },
     computed: {
-
+        gameData() {
+            if (this.gameId != -1 && this.game != undefined) {
+                return this.game['game_data'];
+            }
+            return []
+        },
+        game() {
+            return this.$store.getters.games.find(element => element.id == this.gameId);
+        }
     },
     methods: {
-        convertData() {
-            let games = this.$store.getters.games;
-            // уточнять какую игру
-            let game = games[2];
-            let stringData = game['game_data'].split('');
-            this.gameData = [];
-            for (var i = stringData. length-1; i >= 0; i--) {
-            // for (var i = 0; i < stringData.length; i++) {
-                let code = stringData[i];
-                this.gameData.push(
-                    {
-                        'id': i,
-                        'code': code,
-                        'figure': this.getFigureNameByCode(code),
-                    }
-                )
-            }
-        },
-        getFigureNameByCode(code) {
-            switch(code) {
-                case '1':
-                    return 'pawn-w';
-                case '2':
-                    return 'rook-w';
-                case '3':
-                    return 'knight-w';
-                case '4':
-                    return 'bishop-w';
-                case '5':
-                    return 'king-w';
-                case '6':
-                    return 'queen-w';
-                case '7':
-                    return 'pawn-b';
-                case '8':
-                    return 'rook-b';
-                case '9':
-                    return 'knight-b';
-                case 'A':
-                    return 'bishop-b';
-                case 'B':
-                    return 'king-b';
-                case 'C':
-                    return 'queen-b';
-                default:
-                    return 'empty';
-            }
-        },
         startDragging(event, index) {
             const cells = document.getElementsByClassName('drop-field');
             for (let i = 0; i < cells.length; i++) {
@@ -87,24 +55,44 @@ export default {
                     e.preventDefault();
                 });
             }
-            let figure = event.target.getAttribute('alt');
+            let figure = this.gameData[index].figure;
             event.dataTransfer.setData("text/plain", [figure, index]);
-            // УДАЛЕНИЕ КАРТИНКИ ИЗ ПРОШЛОГО ПОЛОЖЕНИЯ, ЛУЧШЕ СДЕЛАТЬ ПОСЛЕ БРОСКА ЕЕ В ДРУГУЮ КЛЕТКУ
-            this.gameData[index].code = '0';
-            this.gameData[index].figure = this.getFigureNameByCode('0');
         },
         endDraggingAndMakeTurn(event, index) {
+            // Getting data from previous cell
             let dataTransfered = event.dataTransfer.getData('text').split(',');
             console.log(dataTransfered);
-            console.log(index);
-            event.target.setAttribute('src', dataTransfered[0])
+            let figure = dataTransfered[0];
+            let previousCellIndex = dataTransfered[1];
+            
+            // Editing game data
+            this.gameData[previousCellIndex].figure = 'empty';
+            this.gameData[index].figure = figure;
+            this.game['game_data'] = this.gameData;
+            
+            // Creating turn for server request
+            let from = this.gameData[previousCellIndex].cell;
+            let to = this.gameData[index].cell;
+            this.turn = from + "-" + to;
+            this.isTurnMade = true;
         },
+        sendTurnData() {
+            console.log(this.gameData);
+            // Нормализовать данные для сервера и отправить их
+
+            console.log(this.turn);
+            
+        }
     },
     name: 'GameView',
     mounted() {
-        this.$root.$on('showGame', this.convertData);
-        // this.convertData();
-    }
+        this.$root.$on('showGame', (gameId) => this.gameId = gameId);
+
+        // Checking if gameId in path and getting it from there
+        if (!isNaN(parseInt(this.$route.params.id))) {
+            this.gameId = this.$route.params.id;
+        }
+    },
 }
 </script>
 
@@ -141,6 +129,16 @@ export default {
     img {
         width: 100%;
     }
+}
+
+.commit-turn {
+    margin-top: 15px;
+    width: 100%;    
+    height: 60px;
+}
+
+.commit-turn:disabled {
+    display: none;
 }
 
 @media (max-width: 1280px) {

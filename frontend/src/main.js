@@ -17,6 +17,7 @@ Vue.use(VueRouter)
 
 const routes = [
   { path: '/', component: MainView },
+  { path: '/:id', component: MainView },
   { path: '/login', component:  LoginView},
   { path: '/register', component:  RegisterView},
   { path: '/friends', component: FriendList },
@@ -46,7 +47,7 @@ const store = new Vuex.Store({
     },
     games(state) {
       return state.games;
-    }
+    },
   },
   mutations: {
     checkAuthentication (state) {
