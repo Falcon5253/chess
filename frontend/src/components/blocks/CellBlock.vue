@@ -2,7 +2,7 @@
     <img
         :alt="cell.figure"
         :src="require(`../../assets/${cell.figure}.svg`)"
-        :draggable='cell.figure != "empty" && !isTurnMade'
+        :draggable='cell.figure != "empty" && !isTurnMade && !waitingForOpponent'
         :id="cell.cell"
         @dragover='(e) => e.preventDefault()'
         @dragenter='(e) => e.preventDefault()'
@@ -15,7 +15,7 @@
 
 export default {
     name: 'CellBlock',
-    props: ['cell', 'index', 'isTurnMade'],
+    props: ['cell', 'index', 'isTurnMade', 'waitingForOpponent'],
     mounted() {
     },
     methods: {

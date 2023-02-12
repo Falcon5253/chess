@@ -1,6 +1,7 @@
 from rest_framework import serializers
 import math
 from .models import Game
+from user.serializers import RegisterUserSerializer
 
 
 GAMEBOARD = [
@@ -63,10 +64,18 @@ class GameDataField(serializers.Field):
     def to_internal_value(self, data):
         return data
 
+
 class GameSerializer(serializers.ModelSerializer):
     player1 = serializers.CharField()
     player2 = serializers.CharField()
     game_data = GameDataField()
+    whose_turn = serializers.SerializerMethodField('turn_of')
+
+    def turn_of(self, obj):
+        if obj.turn_of_white:
+            return obj.player1.email
+        return obj.player2.email
+        
     class Meta:
         model = Game
-        fields = ['id', 'player1', 'player2', 'game_data']
+        fields = ['id', 'player1', 'player2', 'game_data', 'whose_turn']

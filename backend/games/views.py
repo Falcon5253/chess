@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Game
 from .serializers import GameSerializer
+from core.pusher import pusher_client
+import json
 
 indexes = {
     'A': 0,
@@ -78,7 +80,10 @@ def make_turn(user, game, turn):
     
     game_data = game_array_to_data(next_step_game_array)
     game.game_data = game_data
+    game.turn_of_white = not(game.turn_of_white)
     game.save()
+    game_data = GameSerializer(game)
+    return game_data.data
     
     
 
@@ -99,8 +104,8 @@ class GameView(APIView):
         game = Game.objects.get(id=id)
         user = request.user
 
-        make_turn(user, game, turn)
-        
+        new_game_data = make_turn(user, game, turn)
+        pusher_client.trigger('game' + str(id), 'turnWasMade', new_game_data)
         # Пусть респонс возвращает сразу make_turn
         # Еще надо добавить сохранение сего действа в БД
         return Response({'success':'true'})

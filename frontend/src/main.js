@@ -3,6 +3,7 @@ import App from './App.vue'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
 import Cookies from 'js-cookie'
+import Pusher from 'pusher-js';
 
 import LoginView from '@/components/pages/LoginView.vue'
 import MainView from '@/components/pages/MainView.vue'
@@ -10,14 +11,16 @@ import RegisterView from '@/components/pages/RegisterView.vue'
 import FriendList from '@/components/pages/FriendsList.vue'
 
 
-
+const pusher = new Pusher('ee05f77136a92920f7e1', {
+  cluster: 'eu'
+});
 Vue.use(Vuex)
 Vue.use(VueRouter)
 
 
 const routes = [
   { path: '/', component: MainView },
-  { path: '/:id', component: MainView },
+  { path: '/:id(\\d+)', component: MainView },
   { path: '/login', component:  LoginView},
   { path: '/register', component:  RegisterView},
   { path: '/friends', component: FriendList },
@@ -38,6 +41,7 @@ const store = new Vuex.Store({
     authToken: undefined,
     games: [],
     profile: {},
+    currentGame: {},
   },
   getters: {
     isAuthenticated(state) {
@@ -51,6 +55,9 @@ const store = new Vuex.Store({
     },
     games(state) {
       return state.games;
+    },
+    getGame(state) {
+      return state.currentGame;
     },
   },
   mutations: {
@@ -106,7 +113,6 @@ const store = new Vuex.Store({
       })
     },
     sendTurn(state, data) {
-      console.log(data);
       var formData = new FormData();
       for (let key in data) {
           formData.append(key, data[key]);
@@ -127,6 +133,16 @@ const store = new Vuex.Store({
               throw new Error("Not 2xx response", {cause: res});
           }
       })
+    },
+    updateGame(state, data) {
+      let game = state.games.find((game) => game.id == data.id);
+      let index = state.games.indexOf(game);
+      state.games[index] = data;
+      state.currentGame = data;
+      console.log(data);
+    },
+    setCurrentGame(state, id) {
+      state.currentGame = state.games.find(game => game.id == id);
     }
   },
   actions: {
@@ -142,8 +158,14 @@ const store = new Vuex.Store({
     GET_GAMES(context) {
       context.commit('getGames');
     },
+    SET_CURRENT_GAME(context, id) {
+      context.commit('setCurrentGame', id)
+    },
     SEND_TURN(context, data) {
       context.commit('sendTurn', data);
+    },
+    UPDATE_GAME(context, data) {
+      context.commit('updateGame', data)
     }
   }
 })
@@ -153,6 +175,7 @@ const store = new Vuex.Store({
 Vue.config.productionTip = api;
 
 Vue.prototype.$api = api;
+Vue.prototype.$pusher = pusher;
 
 new Vue({
   render: h => h(App),

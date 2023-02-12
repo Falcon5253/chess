@@ -7,8 +7,9 @@
                     :class="{ player2 : isPlayer2 }"
                     v-for='cell, index in gameData' v-bind:key='cell.id'
                     :cell="cell"
-                    :index=index
                     :isTurnMade=isTurnMade
+                    :waitingForOpponent='!isMyTurn'
+                    :index=index
                     @makeTurn="(e, data) => makeTurn(e, data)"
                 ></CellBlock>
             </div>
@@ -20,6 +21,10 @@
             value='Поддвердить ход'
             :disabled='!isTurnMade'
             @click='sendTurnData()'>
+        <div
+            :class="{ hidden : isMyTurn }">
+            Ожидание хода опонента
+        </div>
     </div>
 </template>
 
@@ -32,20 +37,29 @@ export default {
     },
     data() {
         return {
-            gameId: -1,
             isTurnMade: false,
             turn: '',
         }
     },
     computed: {
+        
+        game() {
+            return this.$store.getters.getGame;
+        },
         gameData() {
-            if (this.gameId != -1 && this.game != undefined) {
+            if (this.game != undefined) {
                 return this.game['game_data'];
             }
-            return []
+            return {}
         },
-        game() {
-            return this.$store.getters.games.find(element => element.id == this.gameId);
+        gameId() {
+            if (this.game != undefined) {
+                return this.game['id'];
+            }
+            return -1
+        },
+        index() {
+            return this.$store.getters.games.find(game => game == this.game);
         },
         isPlayer2() {
             if (this.game != undefined) {
@@ -55,6 +69,15 @@ export default {
             }
             return false;
         },
+        isMyTurn() {
+            if (this.game != undefined) {
+                if (this.game.player2 == this.game.whose_turn) {
+                    return this.isPlayer2;
+                }
+                return !this.isPlayer2;
+            }
+            return false;
+        }
     },
     methods: {
         makeTurn(data) {
@@ -77,17 +100,25 @@ export default {
             this.isTurnMade = true;           
         },
         sendTurnData() {
-            this.$store.dispatch('SEND_TURN', {'game_id': this.gameId, 'turn': this.turn})
+            this.$store.dispatch('SEND_TURN', {'game_id': this.gameId, 'turn': this.turn});
+            this.isTurnMade = false;
+            this.waitingForOpponent = true;
+
+            // Setting awaiting for opponent
+            if (this.isPlayer2) {
+                this.game.whose_turn = this.game.player1;
+            }
+            else {
+                this.game.whose_turn = this.game.player2;
+            }
         }
     },
     name: 'GameView',
     mounted() {
-        this.$root.$on('showGame', (gameId) => this.gameId = gameId);
-
-        // Checking if gameId in path and getting it from there
-        if (!isNaN(parseInt(this.$route.params.id))) {
-            this.gameId = this.$route.params.id;
-        }
+        // On showGame event setting current game
+        this.$root.$on('showGame', (id) => {
+            this.$store.dispatch('SET_CURRENT_GAME', id)
+        });
     },
 }
 </script>
@@ -98,6 +129,8 @@ export default {
     width: 50%;
     user-select: none;
 }
+
+.showMessage
 
 .dragging {
     opacity: 100%;
@@ -138,6 +171,10 @@ export default {
 }
 
 .commit-turn:disabled {
+    display: none;
+}
+
+.hidden {
     display: none;
 }
 

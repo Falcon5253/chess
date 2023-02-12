@@ -15,9 +15,12 @@ class Game(models.Model):
         on_delete=models.CASCADE,
     )
     game_data = models.BinaryField(
-        null=True,
         verbose_name='Игровые данные',
         default=bytes(b"89ABCA9877777777000000000000000000000000000000001111111123456432")
+    )
+    turn_of_white = models.BooleanField(
+        verbose_name='Сейчас ходят белые',
+        default=True
     )
     history = models.BinaryField(
         null=True,
