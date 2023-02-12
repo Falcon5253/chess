@@ -11,8 +11,8 @@ import RegisterView from '@/components/pages/RegisterView.vue'
 import FriendList from '@/components/pages/FriendsList.vue'
 
 
-const pusher = new Pusher('ee05f77136a92920f7e1', {
-  cluster: 'eu'
+const pusher = new Pusher(process.env.VUE_APP_PUSHER_KEY, {
+  cluster: process.env.VUE_APP_PUSHER_CLUSTER,
 });
 Vue.use(Vuex)
 Vue.use(VueRouter)
@@ -139,7 +139,6 @@ const store = new Vuex.Store({
       let index = state.games.indexOf(game);
       state.games[index] = data;
       state.currentGame = data;
-      console.log(data);
     },
     setCurrentGame(state, id) {
       state.currentGame = state.games.find(game => game.id == id);
