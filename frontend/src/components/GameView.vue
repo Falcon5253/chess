@@ -183,12 +183,18 @@ export default {
         width: 480px;
         height: 480px;
     }
+    .figures {
+        grid-template-columns: repeat(8, 60px);
+    }
 }
 
 @media (max-width: 960px) {
     .board { 
         width: 320px;
         height: 320px;
+    }
+    .figures {
+        grid-template-columns: repeat(8, 40px);
     }
 }
 </style>
