@@ -2,11 +2,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Game
-from .serializers import GameSerializer
+from .serializers import GameSerializer, game_data_to_array, blacks, whites, calc_turns
 from core.pusher import pusher_client
-
-whites = ['1', '2', '3', '4', '5', '6']
-blacks =['7', '8', '9', 'A', 'B', 'C']
 
 indexes = {
     'A': 0,
@@ -27,17 +24,6 @@ indexes = {
     '8': 7
 }
 
-
-def game_data_to_array(game_data):
-    game_data = game_data.decode('ascii')
-    game_array = ['']
-    for index, figure in enumerate(game_data):
-        if index % 8 == 0 and index != 0:
-            game_array.insert(0, '')
-        
-        game_array[0] += figure
-
-    return game_array
 
 def turn_to_coordinates(turn):
     turn_from = turn[0:2]
@@ -89,23 +75,10 @@ def make_turn(user, game: Game, turn: str):
     game_data = GameSerializer(game)
     return game_data.data
 
-def check_hack(figure, next_field_value):
-    if next_field_value == '0':
-        return False
-    
-    if (figure in whites and next_field_value in blacks) or (figure in blacks and next_field_value in whites):
-        return True
-    
-    return 'Friendly fire!'
-        
-
-
-def check_turn_posibility(figure, is_hack, x1, x2, y1, y2):
     # Если фигура белая пешка
     print(x1, y1)
     print(x2, y2)
     match figure:
-        
         case '1':
             # Если атакует фигуру оппонента
             if is_hack:
@@ -125,7 +98,6 @@ def check_turn_posibility(figure, is_hack, x1, x2, y1, y2):
                 # Считаем смещение
                 x = x2 - x1
                 y = y2 - y1
-                print(x, y)
                 
                 
                 # Координата "x" не должна меняться
@@ -149,24 +121,14 @@ def check_turn_posibility(figure, is_hack, x1, x2, y1, y2):
         case _:
             return True
 
-
 def turn_is_valid(game: Game, turn):
-    print(turn)
-    x1, x2, y1, y2 = turn_to_coordinates(turn)
-    game_data = game_data_to_array(game.game_data)
-    figure = game_data[y1][x1]
-    is_hack = check_hack(figure, game_data[y2][x2])
+    x, _, y, _ = turn_to_coordinates(turn)
+    move_to = turn[3:]
     
-    if is_hack == 'Friendly fire!':
-        return False
-    
-    if check_turn_posibility(figure, is_hack, x1, x2, y1, y2):
+    if move_to in calc_turns(game.game_data, x, y):
         return True
     
     return False
-    
-    
-    
     
 
 class GameView(APIView):
