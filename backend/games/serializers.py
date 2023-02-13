@@ -1,5 +1,5 @@
 from rest_framework import serializers
-import math
+from math import floor
 from .models import Game
 from user.serializers import RegisterUserSerializer
 
@@ -51,7 +51,7 @@ class GameDataField(serializers.Field):
         index = 0
         response_data = []
         for code in data:
-            row = math.floor(index / 8)
+            row = floor(index / 8)
             column = index % 8
             response_data.append({
                 "cell": GAMEBOARD[row][column],
